@@ -1,8 +1,7 @@
 <?php
 include 'inc/header.php';
-
 $cart = $_SESSION['cart'] ?? [];
-$subTotal = 0 ;
+$subTotal = 0;
 ?>
 <?php include 'inc/errors.php' ?>
 <?php include 'inc/success.php' ?>
@@ -24,17 +23,13 @@ $subTotal = 0 ;
 
         <tbody>
 
-
-
-
-
-
             <?php if (!empty($cart)): ?>
                 <?php foreach ($cart as $id => $item) : ?>
-                    <?php 
-                        
+                    <?php
+
                     $itemTotal = $item['price'] * $item['cart_quantity'];
-                    $subTotal += $itemTotal ;      
+                    $subTotal += $itemTotal;
+
                     ?>
                     <tr>
                         <td>
@@ -43,7 +38,6 @@ $subTotal = 0 ;
                                 <input type="hidden"
                                     name="id"
                                     value="<?= $id ?>">
-
                                 <button type="submit" class="btn btn-danger"
                                     onclick="return confirm('Remove this product?')">
                                     <i class="far fa-times-circle"></i>
@@ -65,18 +59,15 @@ $subTotal = 0 ;
 
 
                         <td>
-                            <?= number_format($item['price'] , 2) ?>
+                            <?= number_format($item['price'], 2) ?>
                         </td>
-
-
                         <td>
-
 
                             <?= $item['cart_quantity'] ?>
                         </td>
 
                         <td>
-                            <?= number_format($itemTotal , 2 ) ?>
+                            <?= number_format($itemTotal, 2) ?>
                         </td>
 
 
@@ -102,17 +93,17 @@ $subTotal = 0 ;
 
 <section id="cart-add" class="section-p1">
 
-    <div id="coupon">
+    <form id="coupon" action="handle/handleCoupons.php" method="POST">
 
         <h3>Coupon</h3>
 
-        <input type="text" placeholder="Enter coupon code">
+        <input type="text" placeholder="Enter coupon code" name="coupon_code">
 
-        <button class="normal">
+        <button class="normal" name="coupon" type=" submit">
             Apply
         </button>
 
-    </div>
+    </form>
 
 
     <div id="subTotal">
@@ -123,7 +114,7 @@ $subTotal = 0 ;
 
             <tr>
                 <td>Subtotal</td>
-                <td><?= number_format($subTotal , 2 ) ?></td>
+                <td><?= number_format($subTotal, 2) ?></td>
             </tr>
 
 
@@ -146,7 +137,13 @@ $subTotal = 0 ;
 
                 <td>
                     <strong>
-<?= number_format($subTotal  , 2 )?>
+                        <?php
+                        $totle = $subTotal;
+                        if (isset($_SESSION['coupon']) && $totle > 0) {
+                            $totle -= $_SESSION['coupon']['value'];
+                        }
+
+                        echo number_format($totle, 2) ?>
                     </strong>
                 </td>
             </tr>

@@ -64,9 +64,25 @@ CREATE TABLE order_items (
     quantity INT UNSIGNED NOT NULL,
     unit_price DECIMAL(10,2) NOT NULL,
     CONSTRAINT fk_order_items_order FOREIGN KEY (order_id)
-        REFERENCES orders(id)
+        REFERoENCES orders(id)
         ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT fk_order_items_product FOREIGN KEY (product_id)
         REFERENCES products(id)
         ON UPDATE CASCADE ON DELETE RESTRICT
 ) ;
+
+CREATE TABLE `coupons` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `code` VARCHAR(50) NOT NULL UNIQUE,
+    `type` ENUM('fixed', 'percentage') NOT NULL DEFAULT 'fixed',
+    `value` DECIMAL(10, 2) NOT NULL,
+    `min_order_amount` DECIMAL(10, 2) NULL DEFAULT NULL,
+    `max_discount_amount` DECIMAL(10, 2) NULL DEFAULT NULL,
+    `usage_limit` INT UNSIGNED NULL DEFAULT NULL,
+    `usage_limit_per_user` INT UNSIGNED NOT NULL DEFAULT 1,
+    `used_count` INT UNSIGNED NOT NULL DEFAULT 0,
+    `starts_at` DATETIME NULL DEFAULT NULL,
+    `expires_at` DATETIME NULL DEFAULT NULL,
+    `is_active` BOOLEAN NOT NULL DEFAULT TRUE,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP);

@@ -41,12 +41,6 @@ if (empty($address)) {
 // insert data 
 if (empty($errors)) {
     try {
-        // check duplication 
-        // $sql = "select id from users where email=? limit 1";
-        // $result = mysqli_query($conn , $sql);
-        // if(mysqli_num_rows($result) > 0){
-        //     $errors[] = "email already exist";
-        // }
 
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         $query = "insert into users(username , email,password ,phone, address) VALUES(? , ?  , ? , ?  , ? )";

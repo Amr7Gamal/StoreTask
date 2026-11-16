@@ -3,7 +3,7 @@
 $host = '127.0.0.1'; 
 $username = 'root'; 
 $password = ''; 
-$database = 'ecommerce_course'; 
+$database = 'ecommerce'; 
 $port = 3306 ; 
 
 try{

@@ -14,7 +14,7 @@ session_start();
     <link rel="stylesheet" href="css/bootstrap.min.css">
 
     <!--Start Home Style -->
-    <link rel="stylesheet" href="css/index_style.css">
+    <link rel="stylesheet" href="css/index_style.css?v=<?= time() ?>">
     <!-- End Home Style -->
 
     <!-- Start Google Fonts -->

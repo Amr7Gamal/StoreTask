@@ -552,22 +552,48 @@ footer .copyright p {
 
 #pagenation {
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
-#pagenation a {
+#pagenation a,
+#pagenation button,
+#pagenation .pagination-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     text-decoration: none;
-    background-color: #088178;
-    color: #fff;
+    background-color: #088178 !important;
+    color: #fff !important;
     padding: 15px 20px;
     border-radius: 4px;
     font-weight: 600;
     font-size: 20px;
+    border: none;
+    outline: none;
+    cursor: pointer;
     transition: 0.3s ease-in-out;
+    line-height: 1;
 }
 
-#pagenation a:hover {
-    background-color: #000;
-    color: #088178;
+#pagenation a:hover,
+#pagenation button:hover,
+#pagenation .pagination-btn:hover {
+    background-color: #000 !important;
+    color: #088178 !important;
+}
+
+#pagenation a.active {
+    background-color: #000 !important;
+    color: #fff !important;
+}
+
+#pagenation form {
+    display: inline-flex;
+    margin: 0;
 }
 
 

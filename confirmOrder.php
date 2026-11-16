@@ -1,5 +1,6 @@
 <?php
 include 'inc/header.php';
+require_once __DIR__ . '/config/db.php';
 
 if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
     header('location:shop.php');
@@ -8,7 +9,6 @@ if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
 
 
 if (isset($_POST['confirm_order'])) {
-
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
     $address = trim($_POST['address']);
@@ -19,7 +19,6 @@ if (isset($_POST['confirm_order'])) {
 
 
     $errors = [];
-
 
     if (
         empty($name) ||
@@ -43,39 +42,42 @@ if (isset($_POST['confirm_order'])) {
         foreach ($_SESSION['cart'] as $item) {
             $total += $item['price'] * $item['cart_quantity'];
         }
-        $order = [
-            'customer' => [
-                'name' => $name,
-                'email' => $email,
-                'address' => $address,
-                'city' => $city,
-                'postal_code' => $postalCode,
-                'phone' => $phone,
-                'payment_type' => $paymentType
-            ],
-            'products' => $_SESSION['cart'],
-            'total' => $total
-        ];
 
-
-        if (!isset($_SESSION['order'])) {
-            $_SESSION['order'] = [];
+        if (isset($_SESSION['coupon'])) {
+            $total -= $_SESSION['coupon']['value'];
         }
 
-        $_SESSION['order'] = $order;
-        unset($_SESSION['cart']);
+        $query = "insert into orders(user_id , customer_name,customer_email ,customer_phone, shipping_address , city , postal_code , payment_method , total) VALUES(? , ?  , ? , ?  , ? , ? , ? , ? , ?)";
+        $stmt = mysqli_prepare($conn, $query);
+        mysqli_stmt_bind_param($stmt, "isssssisi", $_SESSION['logged_user']['id'], $name, $email, $phone, $address, $city, $postalCode, $paymentType, $total);
+        mysqli_stmt_execute($stmt);
+        $orderId = mysqli_insert_id($conn);
+        mysqli_stmt_close($stmt);
+
+
+        $sql = "insert into order_items(order_id,product_id,product_title,quantity,unit_price) VALUES(? , ?  , ? , ?  , ?)";
+        $stmt = mysqli_prepare($conn, $sql);
+
+
+        foreach ($_SESSION['cart'] as $productId => $item) {
+            mysqli_stmt_bind_param($stmt, "iisii",  $orderId, $productId, $item['title'], $item['cart_quantity'],  $item['price']);
+            mysqli_stmt_execute($stmt);
+        }
+        mysqli_stmt_close($stmt);
+
+
+
 
         $_SESSION['success'][] = 'order confirmed';
+
+        unset($_SESSION['cart']);
+        unset($_SESSION['coupon']);
         header('location:shop.php');
         exit();
     }
 }
 
-
-
-
 ?>
-
 
 
 <section id="cart-add" class="section-p1">
@@ -107,19 +109,19 @@ if (isset($_POST['confirm_order'])) {
             <label>Name</label>
             <input
                 type="text"
-                name="name">
+                name="name" , value="<?= isset($_SESSION['logged_user']['username']) ? $_SESSION['logged_user']['username'] : ''; ?>">
 
 
             <label>Email</label>
             <input
                 type="email"
-                name="email">
+                name="email" , value="<?= isset($_SESSION['logged_user']['email']) ? $_SESSION['logged_user']['email'] : ''; ?>">
 
 
             <label>Address</label>
             <input
                 type="text"
-                name="address">
+                name="address" , value="<?= isset($_SESSION['logged_user']['address']) ? $_SESSION['logged_user']['address'] : ''; ?>">
 
 
             <label>City</label>
@@ -137,7 +139,7 @@ if (isset($_POST['confirm_order'])) {
             <label>Phone</label>
             <input
                 type="text"
-                name="phone">
+                name="phone" , value="<?= isset($_SESSION['logged_user']['phone']) ? $_SESSION['logged_user']['phone'] : ''; ?>">
 
 
             <label>Payment Type</label>
